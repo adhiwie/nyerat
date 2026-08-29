@@ -8,6 +8,8 @@ split view, no round‑trip to a browser engine. Just text that looks the way it
 
 Free and open source.
 
+![Nyerat editing a Markdown document, with live-rendered headings, bold, italic, highlight, and inline code](docs/screenshot.webp)
+
 ---
 
 ## Why Nyerat
