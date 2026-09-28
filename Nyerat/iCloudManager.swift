@@ -13,24 +13,35 @@ final class iCloudManager: ObservableObject {
     private var monitorSource: DispatchSourceFileSystemObject?
 
     private init() {
-        folderURL = resolveFolder()
+        // `url(forUbiquityContainerIdentifier:)` can block on disk/network I/O, so resolve off
+        // the main actor and only then load files and start watching the resolved folder.
+        Task.detached(priority: .userInitiated) { [weak self] in
+            let folder = Self.resolveFolder()
+            await self?.didResolveFolder(folder)
+        }
+    }
+
+    private func didResolveFolder(_ folder: URL?) {
+        folderURL = folder
         loadFiles()
         startMonitoring()
     }
 
-    private func resolveFolder() -> URL? {
-        // iCloud Drive direct path — works without iCloud entitlement on non-sandboxed builds
+    private nonisolated static func resolveFolder() -> URL? {
         let home = FileManager.default.homeDirectoryForCurrentUser
-        let iCloudDrive = home
-            .appendingPathComponent("Library/Mobile Documents/com~apple~CloudDocs")
-        let folder = iCloudDrive.appendingPathComponent("Nyerat")
+        let fallback = home.appendingPathComponent("Documents/Nyerat")
+
+        guard let container = FileManager.default.url(forUbiquityContainerIdentifier: nil) else {
+            // iCloud unavailable (not signed in, disabled for the app, etc.)
+            try? FileManager.default.createDirectory(at: fallback, withIntermediateDirectories: true)
+            return fallback
+        }
+        let folder = container.appendingPathComponent("Documents")
 
         do {
             try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
             return folder
         } catch {
-            // Fall back to ~/Documents/Nyerat
-            let fallback = home.appendingPathComponent("Documents/Nyerat")
             try? FileManager.default.createDirectory(at: fallback, withIntermediateDirectories: true)
             return fallback
         }
