@@ -1,17 +1,17 @@
 {
   "fill" : {
     "linear-gradient" : [
-      "extended-gray:1.00000,1.00000",
-      "gray:0.90000,1.00000"
+      "gray:0.90000,1.00000",
+      "gray:0.70000,1.00000"
     ],
     "orientation" : {
       "start" : {
         "x" : 0.5,
-        "y" : 0
+        "y" : 1
       },
       "stop" : {
         "x" : 0.5,
-        "y" : 0.7
+        "y" : 0.3
       }
     }
   },
@@ -21,38 +21,20 @@
         {
           "fill-specializations" : [
             {
-              "value" : "automatic"
-            },
-            {
               "appearance" : "dark",
               "value" : {
-                "linear-gradient" : [
-                  "extended-gray:1.00000,1.00000",
-                  "gray:0.90000,1.00000"
-                ],
-                "orientation" : {
-                  "start" : {
-                    "x" : 0.5,
-                    "y" : 0
-                  },
-                  "stop" : {
-                    "x" : 0.5,
-                    "y" : 0.7
-                  }
-                }
+                "solid" : "display-p3:1.00000,1.00000,1.00000,1.00000"
               }
             },
             {
               "appearance" : "tinted",
               "value" : {
-                "automatic-gradient" : "extended-srgb:0.00000,0.53333,1.00000,1.00000"
+                "solid" : "extended-srgb:0.00000,0.53333,1.00000,1.00000"
               }
             }
           ],
-          "glass" : true,
-          "image-name" : "nyerat.svg",
-          "name" : "nyerat",
-          "opacity" : 1
+          "image-name" : "nyerat v2.svg",
+          "name" : "nyerat v2"
         }
       ],
       "lighting" : "individual",
