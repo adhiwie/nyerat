@@ -31,6 +31,7 @@ xcodebuild archive \
   -configuration Release \
   -archivePath "$ARCHIVE_PATH" \
   -destination "generic/platform=macOS" \
+  -allowProvisioningUpdates \
   CODE_SIGN_STYLE=Automatic
 
 echo "==> Uploading to App Store Connect"
