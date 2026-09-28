@@ -9,6 +9,9 @@ struct SidebarView: View {
     var sidebarVisible: Bool = true
     @State private var renamingFile: MarkdownFile?
     @State private var renameText = ""
+    /// This sidebar's window, so the File-menu "New File" command can be matched to the one window
+    /// it was aimed at rather than acted on by every open window.
+    @State private var hostWindow: NSWindow?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -20,8 +23,14 @@ struct SidebarView: View {
             }
             .listStyle(.sidebar)
         }
-        .onReceive(NotificationCenter.default.publisher(for: .newFile)) { _ in
+        .background(WindowReader(window: $hostWindow))
+        .onReceive(NotificationCenter.default.publisher(for: .newFile)) { notification in
+            guard notification.object as? NSWindow === hostWindow else { return }
             newFile()
+        }
+        .onAppear {
+            // Honours a "New File" issued while the app had no window open, which opened this one.
+            if NewFileRequest.consume() { newFile() }
         }
         .toolbar {
             if sidebarVisible {

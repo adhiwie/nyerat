@@ -21,3 +21,23 @@ struct ScrollEdgeSoftener: NSViewRepresentable {
         }
     }
 }
+
+/// Reports the `NSWindow` hosting a SwiftUI view, so a view can tell whether an app-wide command
+/// was aimed at its own window.
+struct WindowReader: NSViewRepresentable {
+    @Binding var window: NSWindow?
+
+    func makeNSView(context: Context) -> NSView {
+        let view = NSView()
+        DispatchQueue.main.async { window = view.window }
+        return view
+    }
+
+    func updateNSView(_ nsView: NSView, context: Context) {
+        // The view is moved into its window after `makeNSView`, and between windows when tabs are
+        // merged or torn off, so the binding is refreshed on every update rather than set once.
+        DispatchQueue.main.async {
+            if window !== nsView.window { window = nsView.window }
+        }
+    }
+}
