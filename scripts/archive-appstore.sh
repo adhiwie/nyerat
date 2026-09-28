@@ -1,10 +1,17 @@
 #!/bin/bash
 #
-# Build Nyerat as a signed Release archive and export it for App Store Connect.
+# Build Nyerat as a signed Release archive and upload it to App Store Connect.
 #
-# This produces a .pkg under build/appstore-export/ but does NOT upload it —
-# open the resulting archive in Xcode Organizer (Window > Organizer) and use
-# "Distribute App" > App Store Connect, or upload the .pkg with Transporter.
+# This UPLOADS the build: scripts/ExportOptions-AppStore.plist sets
+# "destination" to "upload", so the export step sends the package to App Store
+# Connect rather than leaving it on disk. Authentication comes from the Apple
+# account signed in to Xcode.
+#
+# A build number that is already on App Store Connect will be refused, so bump
+# CURRENT_PROJECT_VERSION before every run.
+#
+# To get a package on disk instead, set "destination" to "export" in that plist;
+# the .pkg then lands in build/appstore-export/ for Transporter or Organizer.
 #
 set -euo pipefail
 
@@ -26,7 +33,7 @@ xcodebuild archive \
   -destination "generic/platform=macOS" \
   CODE_SIGN_STYLE=Automatic
 
-echo "==> Exporting for App Store Connect"
+echo "==> Uploading to App Store Connect"
 xcodebuild -exportArchive \
   -archivePath "$ARCHIVE_PATH" \
   -exportPath "$EXPORT_DIR" \
@@ -34,8 +41,7 @@ xcodebuild -exportArchive \
   -allowProvisioningUpdates
 
 echo
-echo "Done: $ARCHIVE_PATH"
-echo "Exported package: $EXPORT_DIR/$APP_NAME.pkg"
+echo "Done. Archive: $ARCHIVE_PATH"
 echo
-echo "To submit: open $ARCHIVE_PATH in Xcode Organizer and choose"
-echo "Distribute App > App Store Connect > Upload, or upload the .pkg with Transporter."
+echo "The build has been uploaded to App Store Connect and is processing."
+echo "Once processing finishes, attach it to a version there and submit for review."
